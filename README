@@ -1,0 +1,3 @@
+cpgb is a project to create a replacement for gpg that use Elliptic
+Curve Cryptography. cpgb aims to be secure, fast, and easy to use. The priority
+for 0.0.1 is to support signing and authenticated encryption.
