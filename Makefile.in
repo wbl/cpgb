@@ -1,0 +1,12 @@
+VPATH = ../src/cpgb
+IOPTS = -Iinclude
+LOPTS = -Llib -lnacl
+
+%.o : %.c
+	$(compiler) $(IOPTS) -c $? -o $@
+
+% : %.o
+	$(compiler) $(IOPTS) $(LOPTS) $? -o $@
+
+keygen : keygen.o lib/randombytes.o
+keygen.o : keygen.c

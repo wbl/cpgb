@@ -1,0 +1,14 @@
+There are two ways to install. First run the following
+sh naclbuild.sh
+sh naclgoodies.sh
+sh configure.sh
+
+then cd into the build directory and run make.
+
+If you have Nacl already on your machine you may skip running naclbuild
+provided that the headers are in build/include and the libraries are in
+build/lib. You must also write
+
+compiler = $compiler_options_for_nacl
+
+in compiler in build, then run configure.sh and the makefile as above.
