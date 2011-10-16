@@ -1,6 +1,6 @@
-VPATH = ../src/cpgb
-IOPTS = -Iinclude
-LOPTS = -Llib -lnacl
+VPATH = ../../src/cpgb
+IOPTS = -I../include
+LOPTS = -L../lib -lnacl
 
 %.o : %.c
 	$(compiler) $(IOPTS) -c $? -o $@
@@ -8,5 +8,9 @@ LOPTS = -Llib -lnacl
 % : %.o
 	$(compiler) $(IOPTS) $(LOPTS) $? -o $@
 
-keygen : keygen.o lib/randombytes.o
+all : keygen
+keygen : keygen.o ../lib/randombytes.o
 keygen.o : keygen.c
+
+.PHONY clean:
+	rm *

@@ -3,6 +3,7 @@
 #include "randombytes.h"
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
 /*TODO: Add passphrase for keys */
 /*This is very much New Jersey: It runs*/
 int main(int argc, char *argv[]){
@@ -29,12 +30,15 @@ int main(int argc, char *argv[]){
     case 'e':
       encrypting=1;
       break;
+    case 'h':
+      fprintf(stderr, "Usage: cpgb-keygen -[se] public private\n");
+      exit(1);
     case '?':
       fprintf(stderr, "Usage: cpgb-keygen -[se] public private\n");
       exit(1);
     }
   if(encrypting==1 && signing==1){
-    fprintf(stderr, "s and e together not supported.\n");
+    fprintf(stderr, "Options s and e together not supported.\n");
     exit(1);
   }
   if(encrypting==0 && signing == 0){
@@ -48,7 +52,7 @@ int main(int argc, char *argv[]){
   }
   unsigned char * pk;
   unsigned char * sk;
-  if(secret ==1){
+  if(signing ==1){
     pk=malloc(sizeof(char)*crypto_sign_PUBLICKEYBYTES);
     sk=malloc(sizeof(char)*crypto_sign_SECRETKEYBYTES);
     if(pk==NULL || sk==NULL){
@@ -74,14 +78,14 @@ int main(int argc, char *argv[]){
   //We now have to write out our keypair. I assume
   public=fopen(argv[2], "w");
   if(public ==NULL){
-    fprintf("Error: cannot open %s", argv[2]);
+    fprintf(stderr, "Error: cannot open %s", argv[2]);
     exit(1);
   }
   fwrite(pk, sizeof(char), pksize, public);
   fclose(public);
   private=fopen(argv[3], "w");
   if(private ==NULL){
-    fprintf("Error: cannot open %s", argv[3]);
+    fprintf(stderr, "Error: cannot open %s", argv[3]);
     exit(1);
   }
   fwrite(sk, sizeof(char), sksize, private);

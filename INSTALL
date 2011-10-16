@@ -3,7 +3,8 @@ sh naclbuild.sh
 sh naclgoodies.sh
 sh configure.sh
 
-then cd into the build directory and run make.
+then cd into the build/work directory and run make. Note that make clean
+nukes the makefile: this inconvence will be fixed in a later release.
 
 If you have Nacl already on your machine you may skip running naclbuild
 provided that the headers are in build/include and the libraries are in
