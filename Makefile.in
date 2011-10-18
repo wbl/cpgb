@@ -4,17 +4,16 @@ LOPTS = -L../lib -lnacl
 
 %.o : %.c
 	$(compiler) $(IOPTS) -c $? -o $@
-
+#TODO: this the right way
 % : %.o
-	$(compiler) $(IOPTS) $(LOPTS) $? -o $@
+	$(compiler) $(IOPTS) $(LOPTS) $? ../lib/randombytes.o -o $@
 
-all : keygen sign verify
-keygen : keygen.o ../lib/randombytes.o
-sign : sign.o ../lib/randombytes.o
-sign.o : sign.c
-verify: verify.o ../lib/randombytes.o
-verify.o : verify.c
-keygen.o : keygen.c
+all : keygen sign verify encrypt decrypt
+keygen : keygen.o 
+sign : sign.o
+verify: verify.o 
+encrypt: encrypt.o
+decrypt: decrypt.o
 
 .PHONY clean:
 	rm *
