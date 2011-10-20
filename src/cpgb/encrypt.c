@@ -27,6 +27,7 @@ int main(int argc, char *argv[]){
   unsigned char *cryptdata;
   unsigned char nonce [crypto_box_NONCEBYTES];
   unsigned long long datalength;
+  unsigned long long cryptolength;
   int timesize;
   int i;
   if(argc !=4){
@@ -44,7 +45,7 @@ int main(int argc, char *argv[]){
     fprintf(stderr, "Unable to load public key\n");
     exit(1);
   }
-  fclose(pkin);
+  if(fclose(pkin)) exit(1); /*Yes, this can happen*/
   /*we have at this point loaded the public key*/
   skin=fopen(argv[2], "r");
   if(skin==NULL){
@@ -56,7 +57,7 @@ int main(int argc, char *argv[]){
     fprintf(stderr, "Unable to load secret key\n");
     exit(1);
   }
-  fclose(skin);
+  if(fclose(skin)) exit(1);
   /*Here be dragons (read assumptions)
     We have to make our nonce. Now, randombytes is a wonderful thing.
     But we want to make our nonces depend on time. How big is time_t?
@@ -88,28 +89,42 @@ int main(int argc, char *argv[]){
     fprintf(stderr, "Error opening file %s", argv[3]);
     exit(1);
   }
-  //Todo: add error checking on all these functions
-  fseek(datafile, 0, SEEK_END);
+  //Is any system call going to work? Who knows!
+  if(fseek(datafile, 0, SEEK_END)<0) exit(1);
   datalength=ftell(datafile);
-  fseek(datafile, 0, SEEK_SET);
+  if(datalength < 0) exit(1);
+  if(fseek(datafile, 0, SEEK_SET)<0) exit(1);
   data = malloc(datalength+crypto_box_ZEROBYTES); //Need space for padding
-  if(data != NULL){
+  if(data == NULL){
     fprintf(stderr, "Error: out of memory\n");
     exit(1);
   }
   cryptdata = malloc(datalength+crypto_box_ZEROBYTES); //this is due to the API
-  if(cryptdata!=NULL){
+  if(cryptdata ==NULL){
     fprintf(stderr, "Error: out of memory\n");
     exit(1);
   }
-  fread(data+crypto_box_ZEROBYTES, sizeof(char), datalength, datafile);
+  if(fread(data+crypto_box_ZEROBYTES, sizeof(char), datalength, datafile)
+     != datalength){
+    fprintf(stderr, "Read error.\n");
+    exit(1);
+  }
   crypto_box(cryptdata, data, datalength+crypto_box_ZEROBYTES, nonce, pk, sk);
   //Now to write data out
   //First the nonce
-  fwrite(nonce, sizeof(char), crypto_box_NONCEBYTES, stdout);
+  if(fwrite(nonce, sizeof(char), crypto_box_NONCEBYTES, stdout)
+     !=crypto_box_NONCEBYTES){
+    fprintf(stderr, "Write error\n");
+    exit(1);
+  }
+  cryptolength=datalength+crypto_box_ZEROBYTES-crypto_box_BOXZEROBYTES;
   //And now our encrypted data.
-  fwrite(cryptdata+crypto_box_BOXZEROBYTES, sizeof(char), datalength+
-         crypto_box_ZEROBYTES-crypto_box_BOXZEROBYTES, stdout);
+  if(fwrite(cryptdata+crypto_box_BOXZEROBYTES, sizeof(char), cryptolength,
+            stdout)!=cryptolength){
+    fprintf(stderr, "Write error\n");
+    exit(1);
+  }
+  //If close fails I am beyond caring. We aren't going to anything anyway.
   fclose(datafile);
   free(data);
   free(cryptdata);

@@ -11,7 +11,8 @@ int main(int argc, char **argv){
   unsigned char sk[crypto_sign_SECRETKEYBYTES];
   FILE * keyfile;
   FILE * filesign;
-  unsigned long long mlength;
+  long long mlength;
+  long long temp;
   unsigned char *memfile;
   unsigned char *signedfile;
   unsigned long long signlength;
@@ -26,22 +27,30 @@ int main(int argc, char **argv){
     fprintf(stderr, "Unable to open file %s\n", argv[1]);
     exit(1);
   }
-  if(fread(sk, sizeof(char), crypto_sign_SECRETKEYBYTES, keyfile)!=crypto_sign_SECRETKEYBYTES){
+  if(fread(sk, sizeof(char), crypto_sign_SECRETKEYBYTES, keyfile)
+     !=crypto_sign_SECRETKEYBYTES){
     fprintf(stderr, "Error reading secret key\n");
     exit(1);
   }
   /*we should have the key in memory now.*/
-  fclose(keyfile);
+  if(fclose(keyfile)<0) exit(1);
   filesign=fopen(argv[2], "r");
-  fseek(filesign, 0, SEEK_END);
+  if(filesign == NULL){ fprintf(stderr, "Unable to open file %s", argv[2]);
+    exit(1);
+  }
+  if(fseek(filesign, 0, SEEK_END)<0) exit(1);
   mlength = ftell(filesign);
-  fseek(filesign, 0, SEEK_SET);
-  mlength -= ftell(filesign);
+  if(mlength < 0) exit(1);
+  if(fseek(filesign, 0, SEEK_SET)<0) exit(1);
+  if((temp = ftell(filesign))<0) exit(1);
+  mlength -= temp;
   memfile=malloc(mlength*sizeof(char));
-  fread(memfile, sizeof(char), mlength, filesign);
+  if(memfile == NULL){fprintf(stderr, "Out of Memory\n"); exit(1);}
+  if(fread(memfile, sizeof(char), mlength, filesign)!=mlength) exit(1);
   signedfile=malloc((mlength+crypto_sign_BYTES)*sizeof(char));
+  if(signedfile ==NULL){fprintf(stderr, "Out of Memory\n"); exit(1);}
   crypto_sign(signedfile, &signlength, memfile, mlength, sk);
-  fwrite(signedfile, sizeof(char), signlength, stdout);
+  if(fwrite(signedfile, sizeof(char), signlength, stdout)!=signlength) exit(1);
   fclose(filesign);
   free(memfile);
   free(signedfile);

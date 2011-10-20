@@ -9,10 +9,11 @@ int main(int argc, char **argv){
   unsigned char pk[crypto_sign_PUBLICKEYBYTES];
   FILE * keyfile;
   FILE * filesign;
-  unsigned long long slength;
+  long long slength;
   unsigned char *memfile;
   unsigned char *unsignedfile;
-  unsigned long long mlength;
+  long long mlength;
+  long long temp;
   /*We begin by asking if we have enough arguments*/
   if(argc != 3){
     fprintf(stderr, "Usage: cpgb-verify public file\n");
@@ -32,18 +33,28 @@ int main(int argc, char **argv){
   /*we should have the key in memory now.*/
   fclose(keyfile);
   filesign=fopen(argv[2], "r");
-  fseek(filesign, 0, SEEK_END);
+  if(filesign == NULL){
+    fprintf(stderr, "Unable to open file %s\n", argv[2]);
+    exit(1);
+  }
+  if(fseek(filesign, 0, SEEK_END)<0) exit(1);
   slength = ftell(filesign);
-  fseek(filesign, 0, SEEK_SET);
-  slength -= ftell(filesign);
+  if(slength < 0) exit(1);
+  if(fseek(filesign, 0, SEEK_SET)<0) exit(1);
+  temp=ftell(filesign);
+  if(temp<0) exit(1);
+  slength -=temp;
   memfile=malloc(slength*sizeof(char));
-  fread(memfile, sizeof(char), slength, filesign);
+  if(memfile == NULL){ fprintf(stderr, "Insufficent memory\n"); exit(1);}
+  if(fread(memfile, sizeof(char), slength, filesign)!=slength) exit(1);
   unsignedfile=malloc(slength*sizeof(char));
+  if(unsignedfile == NULL) exit(1);
   if(crypto_sign_open(unsignedfile, &mlength, memfile, slength, pk) !=0){
     fprintf(stderr, "Failed verification.\n");
     exit(3);
   }
-  fwrite(unsignedfile, sizeof(char), mlength, stdout);
+  if(fwrite(unsignedfile, sizeof(char), mlength, stdout)!=mlength) exit(1);
+  //At this point nothing different can happen.
   fclose(filesign);
   free(memfile);
   free(unsignedfile);

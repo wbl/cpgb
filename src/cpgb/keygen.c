@@ -42,12 +42,13 @@ int main(int argc, char *argv[]){
     exit(1);
   }
   if(encrypting==0 && signing == 0){
-    fprintf(stderr, "specify an option please.\n");
+    fprintf(stderr, "Usage: cpgb-keygen -[se] public private\n");
     exit(1);
   }
 
   if(argc != 4){
     fprintf(stderr, "Incorrect number of arguments\n");
+    fprintf(stderr, "Usage; cpgb-keygen -[se] public private\n");
     exit(1);
   }
   unsigned char * pk;
@@ -81,14 +82,14 @@ int main(int argc, char *argv[]){
     fprintf(stderr, "Error: cannot open %s", argv[2]);
     exit(1);
   }
-  fwrite(pk, sizeof(char), pksize, public);
+  if(fwrite(pk, sizeof(char), pksize, public)!=pksize) exit(1);
   fclose(public);
   private=fopen(argv[3], "w");
   if(private ==NULL){
     fprintf(stderr, "Error: cannot open %s", argv[3]);
     exit(1);
   }
-  fwrite(sk, sizeof(char), sksize, private);
+  if(fwrite(sk, sizeof(char), sksize, private)!=sksize) exit(1);
   fclose(private);
   free(sk);
   free(pk);
