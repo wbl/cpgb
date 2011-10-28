@@ -1,4 +1,5 @@
 #include "crypto_sign.h"
+#include "slurp.h"
 #include <stdio.h>
 #include <stdlib.h>
 /*This will be run as cpgb-sign private file. It will write a signed
@@ -38,15 +39,8 @@ int main(int argc, char **argv){
   if(filesign == NULL){ fprintf(stderr, "Unable to open file %s", argv[2]);
     exit(1);
   }
-  if(fseek(filesign, 0, SEEK_END)<0) exit(1);
-  mlength = ftell(filesign);
-  if(mlength < 0) exit(1);
-  if(fseek(filesign, 0, SEEK_SET)<0) exit(1);
-  if((temp = ftell(filesign))<0) exit(1);
-  mlength -= temp;
-  memfile=malloc(mlength*sizeof(char));
-  if(memfile == NULL){fprintf(stderr, "Out of Memory\n"); exit(1);}
-  if(fread(memfile, sizeof(char), mlength, filesign)!=mlength) exit(1);
+  memfile=slurp(0, &mlength, filesign);
+  if(memfile==NULL) exit(1);
   signedfile=malloc((mlength+crypto_sign_BYTES)*sizeof(char));
   if(signedfile ==NULL){fprintf(stderr, "Out of Memory\n"); exit(1);}
   crypto_sign(signedfile, &signlength, memfile, mlength, sk);

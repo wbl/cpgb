@@ -1,9 +1,12 @@
 #include "crypto_sign.h"
 #include <stdio.h>
 #include <stdlib.h>
-/*This will be run as cpgb-verify public file.
+#include "slurp.h"
+/*This will be run as cpgb-verify [options] public file
   If file is signed it will print the contents of the file to stdout.
   Else it will return a distinct error code.
+  If options is -q will not print contents but a message "Verification Okay"
+  if signature is good.
 */
 int main(int argc, char **argv){
   unsigned char pk[crypto_sign_PUBLICKEYBYTES];
@@ -27,7 +30,7 @@ int main(int argc, char **argv){
   }
   if(fread(pk, sizeof(char), crypto_sign_PUBLICKEYBYTES, keyfile)
      !=crypto_sign_PUBLICKEYBYTES){
-    fprintf(stderr, "Error reading secret key\n");
+    fprintf(stderr, "Error reading public key\n");
     exit(1);
   }
   /*we should have the key in memory now.*/
@@ -37,16 +40,8 @@ int main(int argc, char **argv){
     fprintf(stderr, "Unable to open file %s\n", argv[2]);
     exit(1);
   }
-  if(fseek(filesign, 0, SEEK_END)<0) exit(1);
-  slength = ftell(filesign);
-  if(slength < 0) exit(1);
-  if(fseek(filesign, 0, SEEK_SET)<0) exit(1);
-  temp=ftell(filesign);
-  if(temp<0) exit(1);
-  slength -=temp;
-  memfile=malloc(slength*sizeof(char));
-  if(memfile == NULL){ fprintf(stderr, "Insufficent memory\n"); exit(1);}
-  if(fread(memfile, sizeof(char), slength, filesign)!=slength) exit(1);
+  memfile=slurp(0, &slength, filesign);
+  if(memfile==NULL){fprintf(stderr, "Error Slurping\n"); exit(1);}
   unsignedfile=malloc(slength*sizeof(char));
   if(unsignedfile == NULL) exit(1);
   if(crypto_sign_open(unsignedfile, &mlength, memfile, slength, pk) !=0){

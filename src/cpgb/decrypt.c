@@ -1,6 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include "crypto_box.h"
+#include "slurp.h"
 /*Decryption is very similar to encryption.
 We are used as follows
 decrypt public private sent
@@ -21,7 +22,7 @@ int main(int argc, char * argv[]){
   long plaintextlength;
   //First our usual. Copied from encrypt.c
   if(argc !=4){
-    fprintf(stderr, "Usage: encrypt public private tobesent\n");
+    fprintf(stderr, "Usage: decrypt public private tobesent\n");
     exit(1);
   }
   /*we now bravely forge ahead.*/
@@ -57,23 +58,12 @@ int main(int argc, char * argv[]){
   }
   if(fread(nonce, sizeof(char), crypto_box_NONCEBYTES, cryptdat)!=
      crypto_box_NONCEBYTES) exit(1);
-  int postnonce = ftell(cryptdat);
-  if(postnonce < 0) exit(1);
-  if(fseek(cryptdat, 0, SEEK_END)<0) exit(1);
-  datalength = ftell(cryptdat);
-  if(datalength < 0) exit(1);
-  datalength -= postnonce;
-  cryptotext=malloc(datalength+crypto_box_BOXZEROBYTES);
-  plaintext=malloc(datalength+crypto_box_BOXZEROBYTES);
-  cryptolength = datalength + crypto_box_BOXZEROBYTES;
-  plaintextlength = cryptolength-crypto_box_ZEROBYTES;
-  if(cryptotext==NULL || plaintext==NULL){
-    fprintf(stderr, "Out of Memory!\n");
-    exit(1);
-  }
-  if(fseek(cryptdat, postnonce, SEEK_SET)<0) exit(1);
-  if(fread(cryptotext+crypto_box_BOXZEROBYTES, sizeof(char),
-           datalength, cryptdat) != datalength) exit(1);
+  /*What happens next is a hack*/
+  cryptotext = slurp(crypto_box_BOXZEROBYTES, &cryptolength, cryptdat);
+  if(cryptotext==NULL) exit(1);
+  plaintext = malloc(cryptolength);
+  if(plaintext==NULL) exit(1);
+  plaintextlength=cryptolength-crypto_box_ZEROBYTES;
   if(crypto_box_open(plaintext, cryptotext, cryptolength, nonce, pk, sk)){
     fprintf(stderr, "Cryptotext invalid\n");
     exit(3);
