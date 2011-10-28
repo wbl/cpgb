@@ -4,6 +4,7 @@
 #include<stdio.h>
 #include "crypto_box.h"
 #include "randombytes.h"
+#include "slurp.h"
 /*The format of an encrypted message is as follows:
   It begins with 24 byte nonce. This nonce is currently formed as an 8 byte
   second resolution timestamp, followed by 16 random bytes.
@@ -90,26 +91,11 @@ int main(int argc, char *argv[]){
     exit(1);
   }
   //Is any system call going to work? Who knows!
-  if(fseek(datafile, 0, SEEK_END)<0) exit(1);
-  datalength=ftell(datafile);
-  if(datalength < 0) exit(1);
-  if(fseek(datafile, 0, SEEK_SET)<0) exit(1);
-  data = malloc(datalength+crypto_box_ZEROBYTES); //Need space for padding
-  if(data == NULL){
-    fprintf(stderr, "Error: out of memory\n");
-    exit(1);
-  }
-  cryptdata = malloc(datalength+crypto_box_ZEROBYTES); //this is due to the API
-  if(cryptdata ==NULL){
-    fprintf(stderr, "Error: out of memory\n");
-    exit(1);
-  }
-  if(fread(data+crypto_box_ZEROBYTES, sizeof(char), datalength, datafile)
-     != datalength){
-    fprintf(stderr, "Read error.\n");
-    exit(1);
-  }
-  crypto_box(cryptdata, data, datalength+crypto_box_ZEROBYTES, nonce, pk, sk);
+  data = slurp(crypto_box_ZEROBYTES, &datalength, datafile);
+  if(data == NULL) exit(1);
+  cryptdata = malloc(datalength);
+  if(cryptdata == NULL) exit(1);
+  crypto_box(cryptdata, data, datalength, nonce, pk, sk);
   //Now to write data out
   //First the nonce
   if(fwrite(nonce, sizeof(char), crypto_box_NONCEBYTES, stdout)
@@ -117,7 +103,7 @@ int main(int argc, char *argv[]){
     fprintf(stderr, "Write error\n");
     exit(1);
   }
-  cryptolength=datalength+crypto_box_ZEROBYTES-crypto_box_BOXZEROBYTES;
+  cryptolength=datalength-crypto_box_BOXZEROBYTES;
   //And now our encrypted data.
   if(fwrite(cryptdata+crypto_box_BOXZEROBYTES, sizeof(char), cryptolength,
             stdout)!=cryptolength){
