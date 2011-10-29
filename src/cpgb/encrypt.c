@@ -110,7 +110,7 @@ int main(int argc, char *argv[]){
     fprintf(stderr, "Write error\n");
     exit(1);
   }
-  //If close fails I am beyond caring. We aren't going to anything anyway.
+  //If close fails I am beyond caring. We aren't going to do anything anyway.
   fclose(datafile);
   free(data);
   free(cryptdata);

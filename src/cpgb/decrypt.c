@@ -48,7 +48,8 @@ int main(int argc, char * argv[]){
     fprintf(stderr, "Unable to load secret key\n");
     exit(1);
   }
-  if(fclose(skin)<0) exit(1); /*I cannot believe this is possible.*/
+  if(fclose(skin)<0) exit(1); /*This is sort of ridiculous. On writing I can
+                                get why we might have work, but reading?*/
   //Now we have loaded our keys.
   //Time to load the file and see what we have
   cryptdat=fopen(argv[3], "r");
@@ -58,7 +59,7 @@ int main(int argc, char * argv[]){
   }
   if(fread(nonce, sizeof(char), crypto_box_NONCEBYTES, cryptdat)!=
      crypto_box_NONCEBYTES) exit(1);
-  /*What happens next is a hack*/
+  /*What happens next is a hack. Slurp sluprs starting at the current point*/
   cryptotext = slurp(crypto_box_BOXZEROBYTES, &cryptolength, cryptdat);
   if(cryptotext==NULL) exit(1);
   plaintext = malloc(cryptolength);

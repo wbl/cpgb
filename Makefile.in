@@ -8,12 +8,13 @@ LOPTS = -L../lib -lnacl
 % : %.o
 	$(compiler) $(IOPTS) $(LOPTS) $? ../lib/randombytes.o -o $@
 
-all : keygen sign verify encrypt decrypt
+all : keygen sign verify encrypt decrypt sign-detached verify-detached
 keygen : keygen.o slurp.o
 sign : sign.o slurp.o
 verify: verify.o slurp.o
 encrypt: encrypt.o slurp.o
 decrypt: decrypt.o slurp.o
-
+sign-detached: sign-detached.o slurp.o
+verify-detached: verify-detached.o slurp.o
 .PHONY clean:
 	rm *

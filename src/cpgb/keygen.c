@@ -22,7 +22,7 @@ int main(int argc, char *argv[]){
   FILE *private;
   opterr=0; //from getopts
   int optc;
-  while((optc=getopt(argc, argv, "se"))!=-1)
+  while((optc=getopt(argc, argv, "seh"))!=-1)
     switch (optc) {
     case 's':
       signing = 1;
