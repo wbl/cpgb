@@ -1,12 +1,12 @@
 VPATH = ../../src/cpgb
 IOPTS = -I../include
 LOPTS = -L../lib -lnacl
-
+OBJS = ../lib/randombytes.o
 %.o : %.c
 	$(compiler) $(IOPTS) -c $? -o $@
-#TODO: this the right way
+#TODO: Make this reliable.
 % : %.o
-	$(compiler) $(IOPTS) $(LOPTS) $? ../lib/randombytes.o -o $@
+	$(compiler) $(IOPTS) $(LOPTS) $^ $(OBJS) -o $@
 
 all : keygen sign verify encrypt decrypt sign-detached verify-detached
 keygen : keygen.o slurp.o
