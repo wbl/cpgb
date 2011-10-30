@@ -40,7 +40,11 @@ int main(int argc, char *argv[]){
   }
   message=slurp(0, &mlength, mfile);
   sigstring=slurp(0, &siglength, sigfile);
-  fread(pk, sizeof(char), crypto_sign_PUBLICKEYBYTES, pkfile);
+  if(fread(pk, sizeof(char), crypto_sign_PUBLICKEYBYTES, pkfile)
+     != crypto_sign_PUBLICKEYBYTES){
+    fprintf(stderr, "Read Error\n");
+    exit(1);
+  }
   if(message == NULL || sigstring==NULL){ fprintf(stderr, "Read Error\n");
     exit(1);
   }
@@ -48,15 +52,15 @@ int main(int argc, char *argv[]){
   sighash=malloc(siglength); //need to check some lengths
   if(sighash==NULL) exit(1);
   if(crypto_sign_open(sighash, &hashlength, sigstring, siglength, pk)){
-    printf("Verification Failed!: Opening\n");
+    printf("Verification Failed!\n");
     exit(1);
   }
   if(hashlength != crypto_hash_BYTES){
-    printf("Verification Failed!: Hashlength\n");
+    printf("Verification Failed!\n");
     exit(1);
   }
   if(memcmp(sighash, mhash, crypto_hash_BYTES)){
-    printf("Verification Failed!: Hashmatch\n");
+    printf("Verification Failed!\n");
     exit(1);
   }
   printf("Verification Succeeded!\n");
