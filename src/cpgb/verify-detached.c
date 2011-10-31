@@ -1,5 +1,6 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
 #include "crypto_hash.h"
 #include "crypto_sign.h"
 #include "slurp.h"
