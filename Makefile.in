@@ -2,7 +2,7 @@ VPATH = ../../src/cpgb
 IOPTS = -I../include
 LOPTS = -L../lib -lnacl
 OBJS = ../lib/randombytes.o
-COPTS = -std=c99
+COPTS = -std=c99 -g
 %.o : %.c
 	$(compiler) $(COPTS) $(IOPTS) -c $? -o $@
 #TODO: Make this reliable.
@@ -10,7 +10,7 @@ COPTS = -std=c99
 	$(compiler) $(IOPTS) $(LOPTS) $^ $(OBJS) -o $@
 
 all : keygen sign verify encrypt decrypt sign-detached verify-detached \
-	encrypt-passphrase
+	encrypt-passphrase decrypt-passphrase
 keygen : keygen.o slurp.o
 sign : sign.o slurp.o
 verify: verify.o slurp.o
@@ -19,5 +19,6 @@ decrypt: decrypt.o slurp.o
 sign-detached: sign-detached.o slurp.o
 verify-detached: verify-detached.o slurp.o
 encrypt-passphrase: encrypt-passphrase.o slurp.o romix.o
+decrypt-passphrase: decrypt-passphrase.o slurp.o romix.o
 .PHONY clean:
 	rm *

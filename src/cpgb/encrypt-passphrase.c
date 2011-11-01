@@ -7,7 +7,7 @@
 #include "slurp.h"
 #include "crypto_secretbox.h"
 #include "randombytes.h"
-unsigned long long getline(char **where, unsigned long long *leng, FILE *src){
+unsigned long long get_line(char **where, unsigned long long *leng, FILE *src){
   char *line; /*needs error handling*/
   size_t length; /*also needs to be right, which should be checked carefully*/
   line=fgetln(src, &length);
@@ -67,9 +67,9 @@ int main(int argc, char *argv[]){
     /*At this point we encounter  an issue: getline is missing!*
      *Solution: use it and define it elsewhere.*
      *Lion fixes this one.*/
-    if(getline(&password, &passlength, stdin)<0) exit(1);
+    if(get_line(&password, &passlength, stdin)<0) exit(1);
     printf("\nRepeat the passphrase:");
-    if(getline(&secondpass, &secondpasslength, stdin)<0) exit(1);
+    if(get_line(&secondpass, &secondpasslength, stdin)<0) exit(1);
     if(tcsetattr(0, TCSANOW, &old)){
       fprintf(stderr, "Unable to renable echo\n");
       exit(1);
@@ -84,6 +84,7 @@ int main(int argc, char *argv[]){
     }
     break;
   } while(1); //Yay for C tricks.
+  printf("\n"); //needed for convience.
   //We now have our password. Time to make a key
   free(secondpass);
   romix(key, crypto_secretbox_KEYBYTES, password, passlength, salt, saltlen);
@@ -96,6 +97,8 @@ int main(int argc, char *argv[]){
   inputdat=slurp(crypto_secretbox_ZEROBYTES, &inputlen, input);
   outputdat=malloc(inputlen);
   if(outputdat==NULL) exit(1);
+  for(int i=0; i<crypto_secretbox_KEYBYTES; i++)
+    printf("%x", key[i]);
   crypto_secretbox(outputdat, inputdat, inputlen, nonce, key);
   outputlen=inputlen-crypto_secretbox_BOXZEROBYTES;
   output=fopen(argv[2], "w");
@@ -107,12 +110,11 @@ int main(int argc, char *argv[]){
   if(fwrite(salt, 1, saltlen, output)!=saltlen) exit(1);
   if(fwrite(nonce, 1, crypto_secretbox_NONCEBYTES, output)!=
      crypto_secretbox_NONCEBYTES) exit(1);
-  if(fwrite(output+crypto_secretbox_BOXZEROBYTES,1, outputlen, output)!=
+  if(fwrite(outputdat+crypto_secretbox_BOXZEROBYTES,1, outputlen, output)!=
      outputlen) exit(1);
   fclose(output);
   fclose(input);
   free(password);
   exit(0);
 }
-  
-  
+
