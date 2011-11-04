@@ -3,7 +3,7 @@
 #include<termios.h>
 #include<string.h>
 #include<err.h>
-#include "romix.h"
+#include "pdkdf.h"
 #include "slurp.h"
 #include "crypto_secretbox.h"
 
@@ -56,7 +56,8 @@ int main(int argc, char *argv[]){
   if(tcsetattr(0, TCSANOW, &old))
     err(1, "Terminal not obeying orders.\n");
   printf("\n"); //Newline nice.
-  romix(key, crypto_secretbox_KEYBYTES, password, passlen, salt, saltlen);
+  pdkdf(key, crypto_secretbox_KEYBYTES, password, passlen,
+   salt, saltlen);
   //can now read in rest of file.
   for(int i=0; i<crypto_secretbox_KEYBYTES; i++)
     printf("%x", key[i]);

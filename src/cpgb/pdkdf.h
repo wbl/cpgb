@@ -1,6 +1,6 @@
-#ifndef __ROMIX
-#define __ROMIX
-extern int romix(unsigned char *,
+#ifndef __PDKDF
+#define __PDKDF
+extern int pdkdf(unsigned char *,
                  unsigned long long,
                  unsigned char *,
                  unsigned long long,

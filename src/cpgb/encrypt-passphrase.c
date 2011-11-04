@@ -3,7 +3,7 @@
 #include<sys/ioctl.h>
 #include<termios.h>
 #include<string.h>
-#include "romix.h"
+#include "pdkdf.h"
 #include "slurp.h"
 #include "crypto_secretbox.h"
 #include "randombytes.h"
@@ -87,7 +87,7 @@ int main(int argc, char *argv[]){
   printf("\n"); //needed for convience.
   //We now have our password. Time to make a key
   free(secondpass);
-  romix(key, crypto_secretbox_KEYBYTES, password, passlength, salt, saltlen);
+  pdkdf(key, crypto_secretbox_KEYBYTES, password, passlength, salt, saltlen);
   //And at this point we do some very conventional things.
   input=fopen(argv[1], "r");
   if(input==NULL){
