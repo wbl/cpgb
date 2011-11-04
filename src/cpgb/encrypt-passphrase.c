@@ -97,8 +97,6 @@ int main(int argc, char *argv[]){
   inputdat=slurp(crypto_secretbox_ZEROBYTES, &inputlen, input);
   outputdat=malloc(inputlen);
   if(outputdat==NULL) exit(1);
-  for(int i=0; i<crypto_secretbox_KEYBYTES; i++)
-    printf("%x", key[i]);
   crypto_secretbox(outputdat, inputdat, inputlen, nonce, key);
   outputlen=inputlen-crypto_secretbox_BOXZEROBYTES;
   output=fopen(argv[2], "w");

@@ -59,8 +59,6 @@ int main(int argc, char *argv[]){
   pdkdf(key, crypto_secretbox_KEYBYTES, password, passlen,
    salt, saltlen);
   //can now read in rest of file.
-  for(int i=0; i<crypto_secretbox_KEYBYTES; i++)
-    printf("%x", key[i]);
   cryptdat=slurp(crypto_secretbox_BOXZEROBYTES, &cryptlen, input);
   plaindat=malloc(cryptlen);
   if(crypto_secretbox_open(plaindat, cryptdat, cryptlen,nonce,key))
