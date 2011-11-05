@@ -23,11 +23,19 @@ int pdkdf(unsigned char *key,
           unsigned long long saltlength){
   unsigned char *phrase;
   unsigned char hash[crypto_hash_BYTES];
+  unsigned char hash2[crypto_hash_BYTES];
+  unsigned long long iters = 1 << 19;
   phrase=malloc(saltlength+passlength);
+  if(phrase==NULL) return -1;
+  if(!(keylength<crypto_hash_BYTES)) return -1;
   memcpy(phrase, salt, saltlength);
   memcpy(phrase+saltlength, passphrase, passlength);
   crypto_hash(hash, phrase, saltlength+passlength);
-  memcpy(key, hash, keylength);
+  for(; iters>0; iters--){
+    crypto_hash(hash2, hash, crypto_hash_BYTES);
+    crypto_hash(hash, hash2, crypto_hash_BYTES);
+  }
+  memcpy(key, hash2, keylength);
   return 0;
 }
 
