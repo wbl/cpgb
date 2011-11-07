@@ -1,3 +1,4 @@
+include ../compiler
 VPATH = ../../src/cpgb
 IOPTS = -I../include
 LOPTS = -L../lib -lnacl
@@ -8,8 +9,8 @@ COPTS = -std=c99 -g
 #TODO: Make this reliable.
 % : %.o
 	$(compiler) $(IOPTS) $(LOPTS) $^ $(OBJS) -o $@
-
-all : keygen sign verify encrypt decrypt sign-detached verify-detached \
+all: base
+base : keygen sign verify encrypt decrypt sign-detached verify-detached \
 	encrypt-passphrase decrypt-passphrase
 keygen : keygen.o slurp.o
 sign : sign.o slurp.o
