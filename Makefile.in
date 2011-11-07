@@ -1,12 +1,12 @@
 include ../compiler
-VPATH = ../../src/cpgb
+VPATH = ../../src/base
 IOPTS = -I../include
 LOPTS = -L../lib -lnacl
 OBJS = ../lib/randombytes.o
 COPTS = -std=c99 -g
 %.o : %.c
 	$(compiler) $(COPTS) $(IOPTS) -c $? -o $@
-#TODO: Make this reliable.
+
 % : %.o
 	$(compiler) $(IOPTS) $(LOPTS) $^ $(OBJS) -o $@
 all: base
@@ -21,5 +21,6 @@ sign-detached: sign-detached.o slurp.o
 verify-detached: verify-detached.o slurp.o
 encrypt-passphrase: encrypt-passphrase.o slurp.o romix.o
 decrypt-passphrase: decrypt-passphrase.o slurp.o romix.o
+
 .PHONY clean:
 	rm *
