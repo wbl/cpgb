@@ -1,5 +1,5 @@
 include ../compiler
-VPATH = ../../src/base
+VPATH = ../../src/base:../../src/keystore
 IOPTS = -I../include
 LOPTS = -L../lib -lnacl
 OBJS = ../lib/randombytes.o
@@ -9,9 +9,13 @@ COPTS = -std=c99 -g
 
 % : %.o
 	$(compiler) $(IOPTS) $(LOPTS) $^ $(OBJS) -o $@
-all: base
+
+all: base keystore
 base : keygen sign verify encrypt decrypt sign-detached verify-detached \
 	encrypt-passphrase decrypt-passphrase
+keystore: hex unhex
+hex : hex.o
+unhex : unhex.o
 keygen : keygen.o slurp.o
 sign : sign.o slurp.o
 verify: verify.o slurp.o

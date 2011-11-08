@@ -1,0 +1,17 @@
+This is just a basic email to public keys store.
+PKIs are a tough problem, so we punt and use this keystore to support
+multiple distribution mechanisms. Think of this as an address book
+for keys.
+
+Your private keys should be stored outside it to avoid dumb mistakes.
+
+We support keytypes. Keys can be signing, encryption, or authorization
+keys (really signing keys). To send a message requires knowing an encryption
+key. Signing keys are used for verifying signatures. Authorization keys
+sign information relating to other keys associated with the email address.
+
+And in true unix style it is the dumbest file format concieved by man:
+email type key
+where key is a hex form of the actual key
+email is the email
+and type is e for encryption, s for signing, and a for authorization.

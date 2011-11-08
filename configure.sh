@@ -3,4 +3,4 @@
 mkdir build/base
 #we will have different componets to make
 #I'm using include
-cat Makefile.in >> build/base/Makefile
+cat Makefile.in > build/base/Makefile
