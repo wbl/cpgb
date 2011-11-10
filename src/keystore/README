@@ -10,8 +10,11 @@ keys (really signing keys). To send a message requires knowing an encryption
 key. Signing keys are used for verifying signatures. Authorization keys
 sign information relating to other keys associated with the email address.
 
-And in true unix style it is the dumbest file format concieved by man:
-email type key
-where key is a hex form of the actual key
-email is the email
-and type is e for encryption, s for signing, and a for authorization.
+I'm currently working out the details of making this keystore work.
+Right now it seems clear to me that we want to have multiple personal keys
+for different uses: signing releases, signing email, SSH, etc. We also
+trust keys in different ways.
+
+Ideally this would support all of that. But that's a bit tricky.
+Instead I'll focus on making it easy to find keys and why we should
+trust key<->name linkages. 
