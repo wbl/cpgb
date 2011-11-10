@@ -2,3 +2,7 @@ Most of the code is by Watson B. Ladd, wbl@uchicago.edu
 Code in the NaCL directory is by Daniel J. Bernstein, Peter Schwabe, Tanja
 Lang, and others. It is avaliable from http://nacl.cr.yp.to and included
 by permission for ease of distribution and use.
+
+Tinyscheme is by Dimitrios Souflis and others. It is avaliable at
+http://tinyscheme.sourceforge.net/download.html. It is reproduce here
+in accordance with its license.
