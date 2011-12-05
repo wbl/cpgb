@@ -4,7 +4,7 @@ purposes. The cryptographic components are from the NaCL project,
 http://nacl.cr.yp.to.
 
 Currently CPGP compiles a few programs: keygen, encrypt, decrypt, sign,
-verify, sign-detached, verify-detached.
+verify, sign-detached, verify-detached, hex, unhex, lookup.
 
 keygen -s spub spriv
 -creates a signing key, putting the public part in spub
@@ -57,6 +57,9 @@ hex takes its standard input and converts it to hex
 unhex
 unhex reverses what hex did.
 
-unhex and hex together with grep and cat are a complete key storage solution.
-=
-All cpgb programs exit with abnormal error codes if an error occurs.
+lookup file key value
+
+lookup examines a file containing a list of association lists in standard
+lisp format, and prints a list contianing all association lists with that key
+and value. Lookup complies with SRFI-22, and is portable across R5RS
+implementations. You will need a Scheme intepreter to run it.
