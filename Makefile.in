@@ -1,6 +1,6 @@
 include ../compiler
 VPATH = ../../src/base:../../src/keystore:../../src/tinyscheme-1.40
-IOPTS = -I../include:../../src/tinyscheme-1.40
+IOPTS = -I../include
 LOPTS = -L../lib -lnacl
 OBJS = ../lib/randombytes.o
 COPTS = -std=c99 -g
@@ -16,7 +16,7 @@ COPTS = -std=c99 -g
 all: base keystore
 base : keygen sign verify encrypt decrypt sign-detached verify-detached \
 	encrypt-passphrase decrypt-passphrase
-keystore: hex unhex scheme
+keystore: hex unhex lookup
 hex : hex.o
 unhex : unhex.o
 keygen : keygen.o slurp.o
@@ -28,6 +28,6 @@ sign-detached: sign-detached.o slurp.o
 verify-detached: verify-detached.o slurp.o
 encrypt-passphrase: encrypt-passphrase.o slurp.o romix.o
 decrypt-passphrase: decrypt-passphrase.o slurp.o romix.o
-scheme: scheme.o
+lookup : lookup.scm
 .PHONY clean:
 	rm *
