@@ -9,6 +9,9 @@ COPTS = -std=c99 -g
 
 % : %.o
 	$(compiler) $(IOPTS) $(LOPTS) $^ $(OBJS) -o $@
+% : %.scm
+	cp $^ $@
+	chmod +x $@
 
 all: base keystore
 base : keygen sign verify encrypt decrypt sign-detached verify-detached \

@@ -1,3 +1,4 @@
+#!/usr/bin/env scheme-r5rs
 (define (filter prop list)
   (cond ((null? list) '())
         ((prop (car list)) (cons (car list) (filter prop (cdr list))))
@@ -9,3 +10,10 @@
 (define (keyfilt key value reclist)
   (filter (lambda (record) (match-record key value record))
           reclist))
+(define (process-port port key value)
+  (keyfilt key value (read port)))
+(define (main args)
+  (begin
+    (display (process-port (open-input-file (cadr args)) (string->symbol
+                                                        (caddr args))
+                                            (cadddr args)))))
