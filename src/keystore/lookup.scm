@@ -1,19 +1,26 @@
-#!/usr/bin/env scheme-r5rs
+;we need scheme48 for POSIX, so no #!
+;and this forces a building solution upon us
+(define (os-string->symbol x)
+  (string->symbol (os-string->string x)))
 (define (filter prop list)
   (cond ((null? list) '())
         ((prop (car list)) (cons (car list) (filter prop (cdr list))))
         (else (filter prop (cdr list)))))
 (define (match-record key value record)
   (let ((val (assoc key record)))
-    (cond ((and (equal? (car val) key) (equal? (cdr val) value)) #t)
+    (cond ((equal? (cdr val) value) #t)
           (else #f))))
 (define (keyfilt key value reclist)
   (filter (lambda (record) (match-record key value record))
           reclist))
 (define (process-port port key value)
   (keyfilt key value (read port)))
-(define (main args)
+(define (process args)
   (begin
-    (display (process-port (open-input-file (cadr args)) (string->symbol
-                                                        (caddr args))
-                                            (cadddr args)))))
+    (display (process-port (open-input-file (car args)) (string->symbol
+                                                         (cadr args))
+                           (caddr args)))
+    (display newline)
+  0))
+(define (main args)
+ (process  (map os-string->string args)))
