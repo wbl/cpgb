@@ -1,7 +1,5 @@
-;we need scheme48 for POSIX, so no #!
-;and this forces a building solution upon us
-(define (os-string->symbol x)
-  (string->symbol (os-string->string x)))
+;Runs in chicken
+
 (define (filter prop list)
   (cond ((null? list) '())
         ((prop (car list)) (cons (car list) (filter prop (cdr list))))
@@ -17,10 +15,10 @@
   (keyfilt key value (read port)))
 (define (process args)
   (begin
-    (display (process-port (open-input-file (car args)) (string->symbol
-                                                         (cadr args))
-                           (caddr args)))
-    (display newline)
+    (display (process-port (open-input-file (cadr args)) (string->symbol
+                                                         (caddr args))
+                           (cadddr args)))
+    (newline)
   0))
-(define (main args)
- (process  (map os-string->string args)))
+
+(process (argv))

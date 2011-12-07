@@ -59,7 +59,6 @@ unhex reverses what hex did.
 
 lookup file key value
 
-lookup examines a file containing a list of association lists in standard
-lisp format, and prints a list contianing all association lists with that key
-and value. Lookup complies with SRFI-22, and is portable across R5RS
-implementations. You will need a Scheme intepreter to run it.
+Lookup examines a list of a-lists in Lips format in file and prints out all
+with (key . "value"). Chicken is required to compile it.
+

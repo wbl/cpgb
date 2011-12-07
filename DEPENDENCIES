@@ -1,0 +1,2 @@
+You need a C compiler and the Chicken Scheme System installed and visible
+with usual names in $PATH
