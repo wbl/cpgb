@@ -35,8 +35,10 @@ int main(int argc, char *argv[]){
   password=malloc(passlen);
   if(password==NULL)
     err(1, "Malloc failed\n");
-  if(argc !=3)
-    err(1, "Usage: decrypt-passphrase encrypted output\n");
+  if(argc !=3){
+    fprintf(stderr, "Usage: decrypt-passphrase encrypted output\n");
+    exit(1);
+  }
   input=fopen(argv[1], "r");
   if(input==NULL)
     err(1, "Error opening file %s", argv[1]);
@@ -61,8 +63,10 @@ int main(int argc, char *argv[]){
   //can now read in rest of file.
   cryptdat=slurp(crypto_secretbox_BOXZEROBYTES, &cryptlen, input);
   plaindat=malloc(cryptlen);
-  if(crypto_secretbox_open(plaindat, cryptdat, cryptlen,nonce,key))
-    err(1, "Decryption failed");
+  if(crypto_secretbox_open(plaindat, cryptdat, cryptlen,nonce,key)){
+    fprintf(stderr, "Decryption failed");
+    exit(1);
+  }
   plainlen=cryptlen-crypto_secretbox_ZEROBYTES;
   output=fopen(argv[2], "w");
   if(output==NULL)
