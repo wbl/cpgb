@@ -60,5 +60,6 @@ unhex reverses what hex did.
 lookup file key value
 
 Lookup examines a list of a-lists in Lips format in file and prints out all
-with (key . "value"). Chicken is required to compile it.
+with (key . "value"). Chicken is required to compile it. Adding to file is
+easy with a text editor.
 
