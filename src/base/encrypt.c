@@ -110,7 +110,7 @@ int main(int argc, char *argv[]){
     fprintf(stderr, "Write error\n");
     exit(1);
   }
-  //If close fails I am beyond caring. We aren't going to do anything anyway.
+  if(fclose(stdout)<0) exit(1); //Catch write errors
   fclose(datafile);
   free(data);
   free(cryptdata);

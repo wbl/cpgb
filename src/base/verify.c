@@ -50,7 +50,8 @@ int main(int argc, char **argv){
   }
   if(fwrite(unsignedfile, sizeof(char), mlength, stdout)!=mlength) exit(1);
   //At this point nothing different can happen.
-  fclose(filesign);
+  if(fclose(filesign)<0) exit(1);
+  if(fclose(stdout)<0) exit(1);
   free(memfile);
   free(unsignedfile);
   exit(0);

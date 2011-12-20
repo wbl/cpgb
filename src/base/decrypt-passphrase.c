@@ -72,10 +72,10 @@ int main(int argc, char *argv[]){
   if(output==NULL)
     err(1, "Error opening %s", argv[2]);
   fwrite(plaindat+crypto_secretbox_ZEROBYTES, sizeof(char), plainlen, output);
-  fclose(output);
+  if(fclose(output)<0) exit(1); //catch write errors
   fclose(input);
   free(plaindat);
   free(cryptdat);
   free(password);
-  exit(1);
+  exit(0);
 }

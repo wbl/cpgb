@@ -83,14 +83,14 @@ int main(int argc, char *argv[]){
     exit(1);
   }
   if(fwrite(pk, sizeof(char), pksize, public)!=pksize) exit(1);
-  fclose(public);
+  if(fclose(public)<0) exit(1);
   private=fopen(argv[3], "w");
   if(private ==NULL){
     fprintf(stderr, "Error: cannot open %s", argv[3]);
     exit(1);
   }
   if(fwrite(sk, sizeof(char), sksize, private)!=sksize) exit(1);
-  fclose(private);
+  if(fclose(private)<0) exit(1);
   free(sk);
   free(pk);
   exit(0);

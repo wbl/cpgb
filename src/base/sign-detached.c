@@ -50,8 +50,9 @@ int main(int argc, char *argv[]){
     fprintf(stderr, "Write failure\n");
     exit(1);
   }
-  fclose(skfile);
-  fclose(mfile);
+  if(fclose(skfile)<0) exit(1);
+  if(fclose(mfile)<0) exit(1);
+  if(fclose(stdout)<0) exit(1);
   free(message);
   exit(0);
 }

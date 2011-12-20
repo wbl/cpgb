@@ -45,7 +45,8 @@ int main(int argc, char **argv){
   if(signedfile ==NULL){fprintf(stderr, "Out of Memory\n"); exit(1);}
   crypto_sign(signedfile, &signlength, memfile, mlength, sk);
   if(fwrite(signedfile, sizeof(char), signlength, stdout)!=signlength) exit(1);
-  fclose(filesign);
+  if(fclose(filesign)<0) exit(1);
+  if(fclose(stdout)<0) exit(1);
   free(memfile);
   free(signedfile);
   exit(0);

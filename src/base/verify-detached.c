@@ -64,6 +64,9 @@ int main(int argc, char *argv[]){
     printf("Verification Failed!\n");
     exit(1);
   }
+  if(fclose(sigfile)<0) exit(1); //Prevent hijinks
+  if(fclose(mfile)<0) exit(1);
+  if(fclose(pkfile)<0) exit(1);
   printf("Verification Succeeded!\n");
   exit(0);
 }

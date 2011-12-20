@@ -73,7 +73,7 @@ int main(int argc, char * argv[]){
             plaintextlength, stdout)!=plaintextlength) exit(1);
   free(plaintext);
   free(cryptotext);
-  //If this fails we aren't doing anything else anway.
-  fclose(cryptdat);
+  if(fclose(cryptdat)<0) exit(1); /*Again, why would a read fail?*/
+  if(fclose(stdout)<0) exit(1); /*Catch truncated output or other problems*/
   exit(0);
 }

@@ -110,7 +110,7 @@ int main(int argc, char *argv[]){
      crypto_secretbox_NONCEBYTES) exit(1);
   if(fwrite(outputdat+crypto_secretbox_BOXZEROBYTES,1, outputlen, output)!=
      outputlen) exit(1);
-  fclose(output);
+  if(fclose(output)<0) exit(1);
   fclose(input);
   free(password);
   exit(0);
